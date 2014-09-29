@@ -4,7 +4,4 @@ API wrapper for iOS
 
 Frameworks
 ---
-```
-* AFNetworking
-* MD5
-```
+* [AFNetworking](https://github.com/AFNetworking/AFNetworking)
