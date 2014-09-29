@@ -49,3 +49,29 @@ Returns all posts in the database.
 - (void)getAllPostsFromUser:(NSString *)userId block:(QUOGetAllObjects)block;
 ```
 Returns all posts from the given user.
+
+```
+- (void)getPostWithIdentifier:(NSString *)identifier block:(QUOGetPost)block;
+```
+Returns a post with the given identifier.
+
+```
+- (void)createPostWithTitle:(NSString *)title
+                       text:(NSString *)text
+                     userId:(NSString *)userId
+                   location:(NSString *)location
+                      block:(QUOSuccess)block;
+```
+Returns true if the post was successfully created.
+
+```
+- (void)likePostWithIdentifier:(NSString *)identifier
+                        userId:(NSString *)userId
+                         block:(QUOSuccess)block;
+```
+Returns true if the like was successful.
+
+```
+- (void)flagPostWithIdentifier:(NSString *)identifier block:(QUOSuccess)block;
+```
+Returns true if the flag was successful.
