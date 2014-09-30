@@ -9,21 +9,26 @@ Frameworks
 Documentation
 ---
 
+**Shared Client**
+
 ```
 + (instancetype)sharedClient;
 ```
 Returns the shared instance of the Quo object.
 
+**Get All Users**
 ```
 - (void)getAllUsersWithBlock:(QUOGetAllObjects)block;
 ```
 Returns all users in the database.
 
+**Get User By ID**
 ```
 - (void)getUserWithIdentifier:(NSString *)identifier block:(QUOGetUser)block;
 ```
 Returns the user with the given identifier.
 
+**Create User**
 ```
 - (void)createUserWithUsername:(NSString *)username
                       password:(NSString *)password
@@ -33,6 +38,7 @@ Returns the user with the given identifier.
 ```
 Returns true if the creation was successful.
 
+**Authenticate User**
 ```
 - (void)authenticateUserWithUsername:(NSString *)username
                             password:(NSString *)password
@@ -40,11 +46,13 @@ Returns true if the creation was successful.
 ```
 Returns true if the authentication was successful.
 
+**Get All Posts**
 ```
 - (void)getAllPostsWithBlock:(QUOGetAllObjects)block;
 ```
 Returns all posts in the database.
 
+**Get All User's Posts**
 ```
 - (void)getAllPostsFromUser:(NSString *)userId block:(QUOGetAllObjects)block;
 ```
