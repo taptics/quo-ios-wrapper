@@ -58,11 +58,13 @@ Returns all posts in the database.
 ```
 Returns all posts from the given user.
 
+**Get Post By ID**
 ```
 - (void)getPostWithIdentifier:(NSString *)identifier block:(QUOGetPost)block;
 ```
 Returns a post with the given identifier.
 
+**Create Post**
 ```
 - (void)createPostWithTitle:(NSString *)title
                        text:(NSString *)text
@@ -72,6 +74,7 @@ Returns a post with the given identifier.
 ```
 Returns true if the post was successfully created.
 
+**Like Post**
 ```
 - (void)likePostWithIdentifier:(NSString *)identifier
                         userId:(NSString *)userId
@@ -79,6 +82,7 @@ Returns true if the post was successfully created.
 ```
 Returns true if the like was successful.
 
+**Flag Post**
 ```
 - (void)flagPostWithIdentifier:(NSString *)identifier block:(QUOSuccess)block;
 ```
