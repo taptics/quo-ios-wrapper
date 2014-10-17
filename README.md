@@ -1,4 +1,4 @@
-Wrapper
+Quo iOS API Wrapper
 ---
 API wrapper for iOS
 
