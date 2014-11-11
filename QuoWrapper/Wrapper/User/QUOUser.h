@@ -11,7 +11,7 @@
 @interface QUOUser : NSObject
 
 @property (nonatomic, strong) NSString *identifier;
-@property (nonatomic, strong) NSString *username;
+@property (nonatomic, strong) NSString *email;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSString *createdAt;
@@ -25,7 +25,7 @@
  @result A brand new user object.
  */
 - (instancetype)initWithIdentifier:(NSString *)identifier
-                          username:(NSString *)username
+                             email:(NSString *)email
                               name:(NSString *)name
                           location:(NSString *)location
                          createdAt:(NSString *)createdAt

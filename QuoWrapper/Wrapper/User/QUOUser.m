@@ -7,22 +7,22 @@
 //
 
 #import "QUOUser.h"
+#import "Quo.h"
 
 @implementation QUOUser
 
-#pragma mark - Init
+#pragma Initializer
 
 - (instancetype)initWithIdentifier:(NSString *)identifier
-                          username:(NSString *)username
+                             email:(NSString *)email
                               name:(NSString *)name
                           location:(NSString *)location
                          createdAt:(NSString *)createdAt
                             avatar:(NSString *)avatar {
-    
     self = [super init];
     if (self) {
         self.identifier = identifier;
-        self.username = username;
+        self.email = email;
         self.name = name;
         self.location = location;
         self.createdAt = createdAt;
@@ -48,12 +48,12 @@
 
 + (void)logOut {
     [QUOUser currentUser].identifier = @"";
-    [QUOUser currentUser].username   = @"";
+    [QUOUser currentUser].email   = @"";
     [QUOUser currentUser].password   = @"";
     [QUOUser currentUser].loggedIn   = NO;
     
     [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].identifier forKey:@"CurrentUserIdentifier"];
-    [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].username   forKey:@"CurrentUserUsername"];
+    [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].email      forKey:@"CurrentUserEmail"];
     [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].password   forKey:@"CurrentUserPassword"];
     [[NSUserDefaults standardUserDefaults]   setBool:[QUOUser currentUser].loggedIn   forKey:@"CurrentUserLoggedIn"];
 }

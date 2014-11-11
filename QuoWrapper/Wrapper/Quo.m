@@ -48,7 +48,7 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
         
         for (id object in responseObject[@"users"]) {
             QUOUser *user = [[QUOUser alloc] initWithIdentifier:object[@"id"]
-                                                       username:object[@"username"]
+                                                       email:object[@"username"]
                                                            name:object[@"name"]
                                                        location:object[@"location"]
                                                       createdAt:object[@"createdAt"]
@@ -71,7 +71,7 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
     
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         QUOUser *user = [[QUOUser alloc] initWithIdentifier:responseObject[@"user"][@"id"]
-                                                   username:responseObject[@"user"][@"username"]
+                                                   email:responseObject[@"user"][@"username"]
                                                        name:responseObject[@"user"][@"name"]
                                                    location:responseObject[@"user"][@"location"]
                                                   createdAt:responseObject[@"user"][@"createdAt"]
@@ -84,7 +84,7 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
     }];
 }
 
-- (void)createUserWithUsername:(NSString *)username
+- (void)createUserWithEmail:(NSString *)email
                       password:(NSString *)password
                           name:(NSString *)name
                       location:(NSString *)location
@@ -95,7 +95,7 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
     [manager.requestSerializer setValue:[Quo sharedClient].apiKey forHTTPHeaderField:@"Authorization-Token"];
     
     NSDictionary *params = @{
-                             @"username" : username,
+                             @"username" : email,
                              @"password" : [password MD5String],
                              @"name"     : name,
                              @"location" : location
@@ -107,7 +107,23 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
         if ([responseObject[@"success"] boolValue] == NO) {
             block(NO, responseObject[@"error"]);
         } else {
-            block(YES, @"");
+            // [QUOUser currentUser].identifier = user.identifier;
+            // TODO: Make sure this actually works
+            // Auto-login after sign up
+            
+            [self authenticateUserWithEmail:email password:password block:^(BOOL success) {
+                if (success) {
+                    [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].identifier forKey:@"CurrentUserIdentifier"];
+                    [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].email   forKey:@"CurrentUserEmail"];
+                    [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].name       forKey:@"CurrentUserName"];
+                    [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].password   forKey:@"CurrentUserPassword"];
+                    [[NSUserDefaults standardUserDefaults]   setBool:[QUOUser currentUser].loggedIn   forKey:@"CurrentUserLoggedIn"];
+                    
+                    block(YES, @"");
+                } else {
+                    NSLog(@"Uh oh, error logging in after sign up.");
+                }
+            }];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -115,7 +131,7 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
     }];
 }
 
-- (void)authenticateUserWithUsername:(NSString *)username
+- (void)authenticateUserWithEmail:(NSString *)email
                             password:(NSString *)password
                                block:(QUOSuccess)block {
     
@@ -124,7 +140,7 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
     [manager.requestSerializer setValue:[Quo sharedClient].apiKey forHTTPHeaderField:@"Authorization-Token"];
     
     NSDictionary *params = @{
-                             @"username" : username,
+                             @"username" : email,
                              @"password" : [password MD5String],
                             };
     
@@ -134,12 +150,14 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
         } else {
             [[Quo sharedClient] getUserWithIdentifier:responseObject[@"userId"] block:^(QUOUser *user) {
                 [QUOUser currentUser].identifier = user.identifier;
-                [QUOUser currentUser].username   = user.username;
+                [QUOUser currentUser].email      = user.email;
+                [QUOUser currentUser].name       = user.name;
                 [QUOUser currentUser].password   = password;
                 [QUOUser currentUser].loggedIn   = YES;
                 
                 [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].identifier forKey:@"CurrentUserIdentifier"];
-                [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].username   forKey:@"CurrentUserUsername"];
+                [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].email      forKey:@"CurrentUserEmail"];
+                [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].name       forKey:@"CurrentUserName"];
                 [[NSUserDefaults standardUserDefaults] setObject:[QUOUser currentUser].password   forKey:@"CurrentUserPassword"];
                 [[NSUserDefaults standardUserDefaults]   setBool:[QUOUser currentUser].loggedIn   forKey:@"CurrentUserLoggedIn"];
             }];
@@ -163,12 +181,12 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
         
         for (id object in responseObject[@"posts"]) {
             QUOPost *post = [[QUOPost alloc] initWithIdentifier:object[@"id"]
-                                                       location:object[@"location"]
-                                                           text:object[@"text"]
-                                                          title:object[@"title"]
-                                                         userId:object[@"userId"]
-                                                          likes:object[@"likes"]
-                                                      createdAt:object[@"createdAt"]];
+                                              location:object[@"location"]
+                                                  text:object[@"text"]
+                                                 title:object[@"title"]
+                                                userId:object[@"userId"]
+                                                 likes:object[@"likes"]
+                                             createdAt:object[@"createdAt"]];
             [posts addObject:post];
         }
         
@@ -189,14 +207,16 @@ static NSString *QUO_FLAG_POST          = @"http://quoapp.herokuapp.com/api/post
         NSMutableArray *posts = [NSMutableArray array];
         
         for (id object in responseObject[@"posts"]) {
-            QUOPost *post = [[QUOPost alloc] initWithIdentifier:object[@"id"]
-                                                       location:object[@"location"]
-                                                           text:object[@"text"]
-                                                          title:object[@"title"]
-                                                         userId:object[@"userId"]
-                                                          likes:object[@"likes"]
-                                                      createdAt:object[@"createdAt"]];
-            [posts addObject:post];
+            [self getUserWithIdentifier:object[@"userId"] block:^(QUOUser *user) {
+                QUOPost *post = [[QUOPost alloc] initWithIdentifier:object[@"id"]
+                                                           location:object[@"location"]
+                                                               text:object[@"text"]
+                                                              title:object[@"title"]
+                                                             userId:object[@"userId"]
+                                                              likes:object[@"likes"]
+                                                          createdAt:object[@"createdAt"]];
+                [posts addObject:post];
+            }];
         }
         
         block(posts);

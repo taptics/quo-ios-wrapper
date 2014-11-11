@@ -9,18 +9,22 @@
 #import <Foundation/Foundation.h>
 #import "QUOUser.h"
 #import "QUOPost.h"
+#import "QUOActionSheet.h"
+#import "QUOBufferView.h"
+#import "QUOSlideMenu.h"
 
-#define TITLE_MAX_LENGTH 26
+#define LATO_FONT   @"Lato"
+#define SKOLAR_FONT @"Skolar"
 
-#define QUO_LATO_REGULAR   @"Lato-Regular"
-#define QUO_LATO_LIGHT     @"Lato-Light"
-#define QUO_LATO_BOLD      @"Lato-Bold"
-#define QUO_SKOLAR         @"Skolar"
+#define DARK_TEXT_COLOR  [UIColor colorWithRed:79/255.f green:79/255.f   blue:79/255.f  alpha:1.f]
+#define LIGHT_GREY_COLOR [UIColor colorWithRed:225/255.f green:225/255.f blue:225/255.f alpha:1.f]
 
-#define QUO_NEW_POST_COLOR [UIColor colorWithRed:50/255.f  green:188/255.f blue:182/255.f alpha:1.f]
-#define QUO_OLD_POST_COLOR [UIColor colorWithRed:231/255.f green:231/255.f blue:231/255.f alpha:1.f]
-#define QUO_BLACK_COLOR    [UIColor colorWithRed:79/255.f  green:79/255.f  blue:79/255.f  alpha:1.f]
-#define QUO_ORANGE_COLOR   [UIColor colorWithRed:255/255.f green:98/255.f  blue:70/255.f  alpha:1.f]
+#define CELL_TEXTFIELD_FRAME CGRectMake(20, 3, 280, 40)
+
+#define IS_IPHONE_4 (fabs((double)[[UIScreen mainScreen]bounds].size.height - (double)480) < DBL_EPSILON)
+#define IS_IPHONE_5 (fabs((double)[[UIScreen mainScreen]bounds].size.height - (double)568) < DBL_EPSILON)
+#define IS_IPHONE_6 (fabs((double)[[UIScreen mainScreen]bounds].size.height - (double)667) < DBL_EPSILON)
+#define IS_IPHONE_6_PLUS (fabs((double)[[UIScreen mainScreen]bounds].size.height - (double)736) < DBL_EPSILON)
 
 typedef void (^QUOGetAllObjects)(NSArray *objects);
 typedef void (^QUOGetUser)(QUOUser *user);
@@ -58,25 +62,25 @@ typedef void (^QUOSuccessMessage)(BOOL success, NSString *error);
 /*!
  Returns true if the creation was successful.
  
- @param username The user's username
+ @param email    The user's email
  @param password The user's password
  @param name     The user's full name
  @result Boolean determining if the creation was successful.
  */
-- (void)createUserWithUsername:(NSString *)username
-                      password:(NSString *)password
-                          name:(NSString *)name
-                      location:(NSString *)location
-                         block:(QUOSuccessMessage)block;
+- (void)createUserWithEmail:(NSString *)email
+                   password:(NSString *)password
+                       name:(NSString *)name
+                   location:(NSString *)location
+                      block:(QUOSuccessMessage)block;
 
 /*!
  Returns true if the authentication was successful.
  
- @param username The user's username
+ @param email    The user's email
  @param password The user's password
  @result Boolean determining if the authentication was successful.
  */
-- (void)authenticateUserWithUsername:(NSString *)username
+- (void)authenticateUserWithEmail:(NSString *)email
                             password:(NSString *)password
                                block:(QUOSuccess)block;
 
